@@ -11,7 +11,6 @@ import numpy as np
 # -----------------------------------------------------------
 
 np.random.seed(42)
-
 num_points = 200
 
 # Features: marketing campaign spend and resulting conversion rate
@@ -31,32 +30,41 @@ sns.set_style("whitegrid")
 sns.set_context("talk")
 
 # 512 x 512 = 8 in x 8 in at 64 dpi
-plt.figure(figsize=(8, 8), dpi=64)
+fig, ax = plt.subplots(figsize=(8, 8), dpi=64)
 
 # -----------------------------------------------------------
-# Scatterplot
+# Scatterplot (use matplotlib scatter to ensure continuous cmap + colorbar)
 # -----------------------------------------------------------
 
-sns.scatterplot(
-    data=df,
-    x="Marketing Spend ($)",
-    y="Conversion Rate (%)",
-    palette="viridis",
-    hue="Conversion Rate (%)",
-    edgecolor="black"
+sc = ax.scatter(
+    df["Marketing Spend ($)"],
+    df["Conversion Rate (%)"],
+    c=df["Conversion Rate (%)"],
+    cmap="viridis",
+    edgecolors="black",
+    linewidths=0.5,
+    s=60,
+    alpha=0.9
 )
+
+# Add colorbar for the continuous hue
+cbar = fig.colorbar(sc, ax=ax)
+cbar.set_label("Conversion Rate (%)")
 
 # -----------------------------------------------------------
 # Labels and title
 # -----------------------------------------------------------
 
-plt.title("Marketing Spend vs Conversion Rate")
-plt.xlabel("Marketing Spend ($)")
-plt.ylabel("Conversion Rate (%)")
+ax.set_title("Marketing Spend vs Conversion Rate")
+ax.set_xlabel("Marketing Spend ($)")
+ax.set_ylabel("Conversion Rate (%)")
+
+plt.tight_layout()
 
 # -----------------------------------------------------------
 # Save chart (exact 512x512 pixels)
 # -----------------------------------------------------------
 
-plt.savefig("chart.png", dpi=64, bbox_inches="tight")
+plt.savefig("chart.png", dpi=64, pad_inches=0)
 plt.close()
+print("Saved chart.png")
